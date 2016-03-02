@@ -7,7 +7,8 @@ app.use(bodyParser.json());
 
 app.listen(9000)
 
-var messages = ["Hello", "This is a test", "All your base are belong to us"];
+// var messages = ["Hello", "This is a test", "All your base are belong to us"];
+var messages = [{}];
 
 app.get('/', function(req, res, next) {
   res.status(200).set({
@@ -22,7 +23,10 @@ app.get('/', function(req, res, next) {
 })
 
 app.post('/', function(req, res, next) {
-  messages.push(req.body.message);
+  messages.push({
+    message: req.body.message,
+    time: new Date()
+  });
 
   res.status(200).set({
     'Content-Type': 'application/json',
@@ -32,5 +36,13 @@ app.post('/', function(req, res, next) {
     'X-XSS-Protection': '1; mode=block',
     'X-Frame-Options': 'SAMEORIGIN',
     'Content-Security-Policy': "default-src 'self' devmountain.github.io"
+  }).send(JSON.stringify(messages));
+})
+
+app.options('/', function(req, res, next) {
+  res.status(200).set({
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'OPTIONS, GET, POST',
+    'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept'
   }).send(JSON.stringify(messages));
 })
